@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Laboratorio 4 - Gestión Infraestructura TIC</title>
+  <style>
+    /* Reset ligero */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html,body { height: 100%; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: #f4f7fb; color:#0f1724; }
+
+    /* Layout */
+    .page {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1; /* hace que ocupe todo el espacio disponible */
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      position: relative;
+      padding: 20px 28px;
+      background: linear-gradient(90deg,#ffffffcc, #eef6ff);
+      box-shadow: 0 4px 14px rgba(16,24,40,0.06);
+    }
+
+
+    /* 'Laboratorio 4' top-left but with spacing */
+    .lab-tag {
+      position: absolute;
+      left: 22px;
+      top: 18px;
+      background: rgba(9,30,66,0.04);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      color:#0b2540;
+      letter-spacing: .2px;
+      transform: translateY(0);
+    }
+
+    .header-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: center;
+      justify-items: center;
+      padding-top: 8px;
+    }
+
+    h1.site-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      color:#05203a;
+    }
+
+    .hero-image {
+      width: 100%;
+      max-width: 920px;
+      height: 180px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 8px 30px rgba(15,23,42,0.08);
+      background:
+        linear-gradient(135deg, rgba(2,6,23,0.06), rgba(3,35,65,0.02));
+      display:block;
+      align-items:center;
+      justify-content:center;
+      color:#0b2540;
+      font-weight:600;
+      font-size:16px;
+      backdrop-filter: blur(2px);
+    }
+
+    main {
+      max-width: 1100px;
+      width: 100%;
+      margin: 28px auto;
+      padding: 0 18px 40px;
+      flex: 1 0 auto;
+      display: grid;
+      gap: 28px;
+    }
+
+    /* Top block: carousel */
+    .top-block {
+      background: white;
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 8px 30px rgba(9,20,40,0.04);
+    }
+    .carousel-header {
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom:12px;
+    }
+    .carousel-header h2 { font-size:18px; margin-left: 6px; color:#08304a; }
+    .carousel {
+      display:grid;
+      grid-template-columns: 48px 1fr 48px;
+      align-items:center;
+      gap:12px;
+    }
+    .carousel .controls {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .carousel .controls button {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      cursor:pointer;
+      padding: 8px;
+      border-radius:8px;
+    }
+    .slide {
+      min-height: 120px;
+      padding: 18px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(240,248,255,0.9), #ffffff);
+      box-shadow: inset 0 -2px 0 rgba(2,6,23,0.02);
+    }
+    .slide h3 {
+      font-size:18px;
+      text-align: justify;
+    }
+    .slide p {
+      color:#233444;
+      line-height:1.6;
+      font-size:16px;  /* igual tamaño que otros bloques */
+      text-align: justify; /* justificado */
+    }
+
+    .dots {
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      margin-top:10px;
+    }
+    .dot {
+      width:10px;height:10px;border-radius:50%;background:#d6e7ff;cursor:pointer;
+    }
+    .dot.active { background:#0e63b7; }
+
+    /* Middle block: flip card + counter */
+    .middle {
+      display: grid;
+      grid-template-columns: 1fr 140px;
+      gap: 18px;
+      align-items: center;
+    }
+
+    /* Flip card */
+    .flip-wrapper {
+      perspective: 1200px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .card {
+      width: 100%;
+      max-width: 720px;
+      min-height: 200px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 16px 40px rgba(2,8,23,0.08);
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card.flipping {
+      transform: rotateY(180deg);
+    }
+    .card .card-inner {
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      position: relative;
+      height: 100%;
+    }
+    /* Title over the card */
+    .card-title {
+      position: relative; /* antes era absolute */
+      top: auto;
+      left: auto;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg,#ffffff,#eef6ff);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-weight:700;
+      color:#05314d;
+      box-shadow: 0 6px 18px rgba(6,20,40,0.04);
+      text-align: center; /* opcional */
+    }
+
+    .card-content h3 { margin-bottom: 8px; color:#05203a; }
+    .card-content p { color:#253444; line-height:1.6; text-align: justify;}
+
+    .card-actions {
+      margin-top: 14px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .btn {
+      background: linear-gradient(90deg,#0d6efd,#0b56b3);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight:600;
+      box-shadow: 0 8px 20px rgba(11,84,179,0.18);
+    }
+    .btn:active { transform: translateY(1px); }
+
+    /* Counter */
+    .counter-box {
+      background: linear-gradient(180deg,#ffffff,#f6fbff);
+      border-radius: 12px;
+      padding: 18px;
+      text-align:center;
+      box-shadow: 0 8px 20px rgba(2,8,23,0.04);
+    }
+    .counter-box h4 { color:#05314d; margin-bottom:8px; }
+    .counter-number {
+      font-size: 44px;
+      font-weight:800;
+      color:#0e63b7;
+      line-height: 1;
+    }
+
+    /* Lower block: two cards */
+    .bottom {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .info-card {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(6,18,40,0.04);
+    }
+    .info-card h3 { margin-bottom:8px; color:#05314d; }
+    .info-card p { color:#263443; line-height:1.5; text-align: justify;}
+
+    footer {
+      padding: 14px 18px;
+      text-align:center;
+      font-size:13px;
+      color:#12354f;
+      background: transparent;
+    }
+    .credits {
+      display:inline-block;
+      background: rgba(9,30,66,0.03);
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(2,8,23,0.02);
+    }
+
+    /* Responsive */
+    @media (max-width: 880px) {
+      .middle { grid-template-columns: 1fr; }
+      .counter-box { order: 2; margin-top: 12px; }
+      .bottom { grid-template-columns: 1fr; }
+      .carousel { grid-template-columns: 40px 1fr 40px; }
+      .hero-image { height: 140px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="lab-tag">Laboratorio 4</div>
+
+      <div class="header-content">
+        <h1 class="site-title">Gestión de Infraestructura TIC</h1>
+        <img src="tic.png" alt="Cabecera de Infraestructura TIC" class="hero-image">
+      </div>
+  </div>
+    </header>
+
+    <main>
+      <!-- BLOQUE SUPERIOR: Carrusel -->
+      <section class="top-block" aria-labelledby="carousel-title">
+        <div class="carousel-header">
+          <h2 id="carousel-title">La gerencia de recursos tecnológico</h2>
+          <div style="font-size:13px;color:#225b9c;font-weight:600;">Carrusel</div>
+        </div>
+
+        <div class="carousel" role="region" aria-roledescription="carousel">
+          <div class="controls">
+            <button id="prevBtn" aria-label="Anterior">&larr;</button>
+          </div>
+
+          <div>
+            <div class="slide" id="slide">
+              <h3 id="slide-title">Planificación</h3>
+              <p id="slide-text">La planificación define la visión, las prioridades y el roadmap para la infraestructura de TIC: inventario, presupuesto, SLA y escalabilidad futura.</p>
+
+              <div class="dots" id="dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="nextBtn" aria-label="Siguiente">&rarr;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- BLOQUE INTERMEDIO: Card flip + contador -->
+      <section class="middle" aria-labelledby="importance-title">
+        <div class="flip-wrapper">
+          <div class="card" id="flipCard" aria-live="polite">
+            <div class="card-title" id="importance-title">Importancia de la Gestión de la infraestructura de TIC</div>
+
+            <div class="card-inner card-content" id="cardContent">
+              <h3 id="card-heading">Gestión de hardware y software</h3>
+              <p id="card-paragraph">
+                La gestión de hardware y software consiste en administrar activos físicos y lógicos (servidores, estaciones, licencias, parches). Su adecuada administración permite disponibilidad, reduce costos y evita obsolescencia, garantizando la continuidad operativa de la organización.
+              </p>
+
+              <div class="card-actions">
+                <button class="btn" id="flipBtn" aria-controls="cardContent">Siguiente ▶</button>
+                <div style="margin-left: auto; font-size:13px;color:#456b8d;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="counter-box" aria-hidden="false">
+          <h4>Vuelta</h4>
+          <div class="counter-number" id="counter">1</div>
+          <div style="font-size:12px;color:#2b4f70;margin-top:6px;">(Máx. 4)</div>
+        </div>
+      </section>
+
+      <!-- BLOQUE INFERIOR -->
+      <section class="bottom" aria-label="Información adicional">
+        <article class="info-card">
+          <h3>Integración tecnológica</h3>
+          <p>
+            La integración tecnológica en la gestión de la infraestructura de TIC se refiere a la capacidad de conectar y coordinar los distintos sistemas, aplicaciones y dispositivos dentro de una organización para que trabajen de manera conjunta y eficiente. Esta integración permite que la información fluya de forma segura y rápida entre diferentes áreas, evitando duplicidad de datos y facilitando la toma de decisiones basada en información precisa y actualizada. Además, asegura que los procesos empresariales sean más ágiles y coherentes, optimizando el uso de los recursos tecnológicos disponibles.
+          </p>
+        </article>
+
+        <article class="info-card">
+          <h3>Ética y uso responsable de la tecnología</h3>
+          <p>
+            La ética y el uso responsable de la tecnología en la gestión de la infraestructura de TIC son fundamentales para garantizar que los recursos tecnológicos se utilicen de manera correcta y segura, respetando las normas legales y los derechos de las personas. Esto incluye proteger la privacidad de los datos, evitar el acceso no autorizado a la información, prevenir el uso indebido de sistemas y asegurar que las decisiones automatizadas o basadas en tecnología sean justas y transparentes. Aplicar principios éticos ayuda a minimizar riesgos legales y reputacionales para la organización.,
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="credits">
+        <div><strong>Realizado por: Iván Ovalles</strong></div>
+        <div id="credit-name" style="margin-bottom:6px;">____________________</div>
+        <div><strong>Fecha:</strong></div>
+        <div id="credit-date" style="margin-bottom:6px;">--/--/----</div>
+        <div><strong>UTP</strong></div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    /* ---------- Carrusel ---------- */
+    (function(){
+      const slides = [
+        {
+          title: "Planificación",
+          text: "Se refiere al proceso mediante el cual una organización organiza, gestiona y proyecta el uso de sus recursos tecnológicos (hardware, software, redes, datos, personal especializado, etc.) para que estén alineados con los objetivos estratégicos de la empresa. En la planificación tecnológica, se evalúa el sistema actual, se detectan fallas (como caídas frecuentes o lentitud), se define el objetivo (migrar a un sistema en la nube), se elige la estrategia (contratar un proveedor, capacitar al personal en la nueva plataforma) y se destina presupuesto para implementar la solución."
+        },
+        {
+          title: "Diseño",
+          text: "El diseño en la gerencia de recursos tecnológicos es la etapa donde se estructura y organiza la solución tecnológica que se va a implementar, a partir de la planificación previa. Mientras la planificación responde al qué se necesita y para qué, el diseño se centra en cómo se va a implementar de manera eficiente."
+        },
+        {
+          title: "Implementación",
+          text: "La implementación en la gerencia de recursos tecnológicos es la fase en la que se pone en práctica el plan y el diseño previamente elaborados, instalando, configurando y adaptando los recursos tecnológicos para que comiencen a funcionar en la organización. Aquí la teoría y los planes se convierten en acciones concretas: compra de equipos, instalación de software, migración de datos, capacitación del personal y puesta en marcha de los sistemas."
+        },
+        {
+          title: "Evaluación",
+          text: "La evaluación de la infraestructura de Tecnologías de la Información y Comunicación (TIC) es el proceso mediante el cual una organización analiza, diagnostica y valora el estado actual de sus recursos tecnológicos (hardware, software, redes, bases de datos, seguridad, personal técnico, etc.) para determinar si cumplen con las necesidades y objetivos estratégicos de la empresa. "
+        }
+      ];
+
+      let idx = 0;
+      const slideTitle = document.getElementById('slide-title');
+      const slideText = document.getElementById('slide-text');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const dots = Array.from(document.querySelectorAll('.dot'));
+      let autoplay = null;
+
+      function render() {
+        const s = slides[idx];
+        slideTitle.textContent = s.title;
+        slideText.textContent = s.text;
+
+        dots.forEach(d => d.classList.remove('active'));
+        const activeDot = dots[idx];
+        if (activeDot) activeDot.classList.add('active');
+      }
+
+      function next() { idx = (idx + 1) % slides.length; render(); }
+      function prev() { idx = (idx - 1 + slides.length) % slides.length; render(); }
+      prevBtn.addEventListener('click', () => { prev(); resetAuto(); });
+      nextBtn.addEventListener('click', () => { next(); resetAuto(); });
+
+      dots.forEach(d => d.addEventListener('click', () => {
+        idx = parseInt(d.dataset.index, 10);
+        render();
+        resetAuto();
+      }));
+
+      function startAuto() {
+        autoplay = setInterval(next, 5000);
+      }
+      function resetAuto() {
+        if (autoplay) clearInterval(autoplay);
+        startAuto();
+      }
+
+      render();
+      startAuto();
+    })();
+
+    /* ---------- Flip card con 4 estados y contador ---------- */
+    (function(){
+      const contents = [
+        {
+          title: "Gestión de hardware y software",
+          text: "La gestión de la infraestructura de TIC, enfocada en el hardware y el software, es fundamental porque garantiza que los recursos tecnológicos de una organización estén disponibles, actualizados y funcionando de manera eficiente. El hardware (servidores, computadoras, dispositivos de red, almacenamiento, etc.) es la base física que soporta las operaciones, mientras que el software (sistemas operativos, aplicaciones de gestión, plataformas de comunicación, etc.) permite ejecutar los procesos de negocio. Una correcta gestión asegura que ambos recursos se encuentren en óptimas condiciones, evitando interrupciones en las actividades diarias y permitiendo una mejor productividad."
+        },
+        {
+          title: "Monitoreo y optimización de recursos",
+          text: "El monitoreo de los recursos TIC es esencial porque permite supervisar en tiempo real el rendimiento de la infraestructura tecnológica, identificando posibles fallos, cuellos de botella o vulnerabilidades antes de que afecten las operaciones. A través de herramientas de monitoreo, la organización puede verificar el uso de servidores, redes, aplicaciones y almacenamiento, garantizando la disponibilidad, estabilidad y seguridad de los servicios. Esto no solo evita interrupciones costosas, sino que también mejora la capacidad de respuesta ante incidentes y asegura una experiencia confiable para los usuarios."
+        },
+        {
+          title: "Seguridad tecnológica",
+          text: "La seguridad tecnológica en la gestión de la infraestructura de TIC es crucial porque protege los activos digitales de una organización frente a amenazas como virus, ataques cibernéticos, pérdida de datos o accesos no autorizados. Al implementar políticas de seguridad, controles de acceso, copias de seguridad y sistemas de protección, se garantiza la confidencialidad, integridad y disponibilidad de la información. Esto no solo protege los datos internos, sino también la confianza de clientes, socios y usuarios que interactúan con los sistemas de la empresa."
+        },
+        {
+          title: "Capacitación continua",
+          text: "La capacitación continua en la gestión de la infraestructura de TIC es fundamental porque permite que el personal de la organización se mantenga actualizado frente a los constantes cambios tecnológicos. Los avances en hardware, software, ciberseguridad y metodologías digitales requieren que los trabajadores adquieran nuevas competencias para operar y administrar de manera eficiente los recursos tecnológicos. De esta forma, la capacitación asegura un mejor aprovechamiento de la infraestructura, reduce errores humanos y mejora la capacidad de respuesta ante problemas técnicos."
+        }
+      ];
+
+      let current = 0; // inicia en 0 → contador muestra 1
+      const card = document.getElementById('flipCard');
+      const flipBtn = document.getElementById('flipBtn');
+      const counterEl = document.getElementById('counter');
+      const heading = document.getElementById('card-heading');
+      const para = document.getElementById('card-paragraph');
+
+      function renderContent() {
+        const c = contents[current];
+        heading.textContent = c.title;
+        para.textContent = c.text;
+        counterEl.textContent = (current + 1).toString();
+      }
+
+      // Animation duration must match CSS transition (0.6s)
+      const flipDuration = 600;
+
+      flipBtn.addEventListener('click', () => {
+        // Add 'flipping' class to animate
+        card.classList.add('flipping');
+
+        // advance index (cycle 0..3)
+        current = (current + 1) % contents.length;
+
+        // After half the flip (so content changes while flipped), update content.
+        // We'll wait for the CSS transition to finish to remove class and show new content.
+        setTimeout(() => {
+          renderContent();
+        }, flipDuration / 2);
+
+        // Remove flipping class when animation ends
+        setTimeout(() => {
+          card.classList.remove('flipping');
+        }, flipDuration);
+      });
+
+      // Initialize
+      renderContent();
+    })();
+
+    /* ---------- Pie: fecha actual en footer ---------- */
+    (function(){
+      const dateEl = document.getElementById('credit-date');
+      const now = new Date();
+      // Formato dd/mm/yyyy
+      const dd = String(now.getDate()).padStart(2,'0');
+      const mm = String(now.getMonth()+1).padStart(2,'0');
+      const yyyy = now.getFullYear();
+      dateEl.textContent = dd + '/' + mm + '/' + yyyy;
+    })();
+
+
+    (function(){
+
+    })();
+  </script>
+</body>
+</html>
